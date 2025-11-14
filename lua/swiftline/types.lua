@@ -1,6 +1,3 @@
----@class swiftline.ProviderSpec
----@field get fun() : string|nil A string to be displayed in the statusline or nil to hide the module
-
 ---@class swiftline.StyleSpec: vim.api.keyset.highlight
 ---Normalized style specification used internally.
 ---All fields are guaranteed to be present and fully expanded after parsing.
