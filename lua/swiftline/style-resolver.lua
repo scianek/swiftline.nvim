@@ -29,9 +29,11 @@ local DEFAULTS = {
 
 ---Supply default styles and expand shorthand separator definitions
 ---@param style_config swiftline.StyleConfig
+---@param default_style? swiftline.StyleConfig
 ---@return swiftline.StyleSpec
-function M.resolve_style(style_config)
-    local style = vim.tbl_extend("force", DEFAULTS, style_config or {})
+function M.resolve_style(style_config, default_style)
+    local defaults = vim.tbl_extend("force", DEFAULTS, default_style or {})
+    local style = vim.tbl_extend("force", defaults, style_config or {})
     local default_sep_styles = {
         fg = style.bg,
         bg = vim.api.nvim_get_hl(0, { name = "StatusLine" }).bg,

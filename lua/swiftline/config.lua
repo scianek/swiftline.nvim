@@ -1,5 +1,6 @@
 ---@class swiftline.Config
 ---@field modules swiftline.ModuleConfig[]
+---@field default_style? swiftline.StyleConfig
 
 ---@class swiftline.ModuleConfig
 ---@field [1] swiftline.ProviderSpec
@@ -15,7 +16,8 @@ function M.parse_config(config)
     local parsed_modules = {}
     for idx, module in ipairs(config.modules) do
         local provider = module[1]
-        local parsed_style = style_resolver.resolve_style(module.style)
+        local parsed_style =
+            style_resolver.resolve_style(module.style, config.default_style)
         local parsed_module = {
             provider = provider,
             style = parsed_style,
