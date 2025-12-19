@@ -28,8 +28,8 @@ local DEFAULTS = {
 }
 
 ---Supply default styles and expand shorthand separator definitions
----@param style_config swiftline.StyleConfig
----@param default_style? swiftline.StyleConfig
+---@param style_config swiftline.StyleConfig|swiftline.Style
+---@param default_style? swiftline.StyleConfig|swiftline.Style
 ---@return swiftline.StyleSpec
 function M.resolve_style(style_config, default_style)
     local defaults = vim.tbl_extend("force", DEFAULTS, default_style or {})

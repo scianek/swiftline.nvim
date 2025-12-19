@@ -1,10 +1,10 @@
 ---@class swiftline.Config
----@field modules swiftline.ModuleConfig[]
----@field default_style? swiftline.StyleConfig
+---@field modules (swiftline.ModuleConfig|swiftline.ProviderSpec)[]
+---@field default_style? swiftline.StyleConfig|swiftline.Style
 
 ---@class swiftline.ModuleConfig
 ---@field [1] swiftline.ProviderSpec
----@field style? swiftline.StyleConfig
+---@field style? swiftline.StyleConfig|swiftline.Style
 
 local M = {}
 

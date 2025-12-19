@@ -1,8 +1,3 @@
----@class swiftline.StyleSpec: vim.api.keyset.highlight
----Normalized style specification used internally.
----All fields are guaranteed to be present and fully expanded after parsing.
----@field sep swiftline.SeparatorSpec Fully normalized separator specification
-
 ---@class swiftline.SeparatorSpec
 ---Normalized separator specification with both sides fully defined.
 ---@field left swiftline.SeparatorSideSpec Left separator (fully normalized)
