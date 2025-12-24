@@ -1,20 +1,18 @@
 local M = {}
 
-local module_specs
+local runtime = require("swiftline.runtime")
 
-local render_module = require("swiftline.renderer").render_module
-
+---Render function called by statusline expression
+---@return string
 function M.render()
-    local segments = {}
-    for idx, _ in ipairs(module_specs) do
-        segments[idx] = render_module(module_specs[idx])
-    end
-    return table.concat(segments)
+    return runtime.render()
 end
 
----@param config swiftline.Config The configuration table
+---Setup the statusline
+---@param config swiftline.Config
 function M.setup(config)
-    module_specs = require("swiftline.config").parse_config(config)
+    local module_specs = require("swiftline.config").parse_config(config)
+    runtime.init(module_specs)
     vim.o.statusline = "%{%v:lua.require'swiftline'.render()%}"
 end
 

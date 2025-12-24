@@ -1,5 +1,6 @@
 ---@class swiftline.ProviderSpec
 ---@field get fun() : string|nil A string to be displayed in the statusline or nil to hide the module
+---@field events? string[] A list of events that trigger the provider to update
 
 ---@class swiftline.Provider: swiftline.ProviderSpec
 local Provider = {}
@@ -11,6 +12,7 @@ Provider.__index = Provider
 function Provider:new(spec)
     return setmetatable({
         get = spec.get,
+        events = spec.events,
     }, self)
 end
 
@@ -26,6 +28,7 @@ function Provider:transform(fn)
             end
             return fn(result)
         end,
+        events = self.events,
     }, { __index = self })
 end
 

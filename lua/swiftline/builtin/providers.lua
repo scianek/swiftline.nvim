@@ -65,6 +65,7 @@ function M.lsp()
 
             return table.concat(names, " ")
         end,
+        events = { "LspAttach", "LspDetach" },
     })
 end
 
@@ -86,6 +87,7 @@ function M.git_branch()
 
             return vim.b.git_branch_cache or nil
         end,
+        events = { "BufEnter", "DirChanged", "User GitSignsUpdate" },
     })
 end
 
@@ -100,6 +102,7 @@ function M.git_diff_added()
                 return vim.b.gitsigns_status_dict.added
             end
         end,
+        events = { "User GitSignsUpdate" },
     })
 end
 
@@ -114,6 +117,7 @@ function M.git_diff_changed()
                 return vim.b.gitsigns_status_dict.changed
             end
         end,
+        events = { "User GitSignsUpdate" },
     })
 end
 
@@ -128,6 +132,7 @@ function M.git_diff_removed()
                 return vim.b.gitsigns_status_dict.removed
             end
         end,
+        events = { "User GitSignsUpdate" },
     })
 end
 
@@ -156,6 +161,7 @@ function M.filename()
             end
             return content
         end,
+        events = { "BufEnter", "BufWritePost", "BufModifiedSet" },
     })
 end
 
@@ -205,6 +211,7 @@ function M.cwd()
         get = function()
             return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
         end,
+        events = { "DirChanged" },
     })
 end
 
@@ -216,6 +223,7 @@ function M.diagnostics_errors()
             })
             return count > 0 and tostring(count) or nil
         end,
+        events = { "DiagnosticChanged" },
     })
 end
 
@@ -227,6 +235,7 @@ function M.diagnostics_warnings()
             })
             return count > 0 and tostring(count) or nil
         end,
+        events = { "DiagnosticChanged" },
     })
 end
 
@@ -238,6 +247,7 @@ function M.diagnostics_hints()
             })
             return count > 0 and tostring(count) or nil
         end,
+        events = { "DiagnosticChanged" },
     })
 end
 
@@ -249,6 +259,7 @@ function M.diagnostics_info()
             })
             return count > 0 and tostring(count) or nil
         end,
+        events = { "DiagnosticChanged" },
     })
 end
 
