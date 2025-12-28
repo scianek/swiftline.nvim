@@ -13,21 +13,33 @@ function M.filename()
             end
 
             local ok, devicons = pcall(require, "nvim-web-devicons")
-            local icon = ""
-
-            if ok then
-                local i, h =
-                    devicons.get_icon(filename, nil, { default = true })
-                if i and h then
-                    icon = "%#" .. h .. "#" .. i .. "%* "
-                end
+            if not ok then
+                if vim.bo.modified then filename = filename .. " ●" end
+                return filename
             end
 
-            local content = icon .. filename
+            local icon, hl_name = devicons.get_icon(filename, nil, { default = true })
+            if not icon then
+                if vim.bo.modified then filename = filename .. " ●" end
+                return filename
+            end
+
+            local devicon_hl = vim.api.nvim_get_hl(0, { name = hl_name })
+            local content = icon .. " " .. filename
             if vim.bo.modified then
                 content = content .. " ●"
             end
-            return content
+
+            return {
+                content = content,
+                highlights = {
+                    {
+                        start_pos = 1,
+                        end_pos = #icon,
+                        hl = { fg = devicon_hl.fg }
+                    }
+                }
+            }
         end,
         events = { "BufEnter", "BufWritePost", "BufModifiedSet" },
     })
