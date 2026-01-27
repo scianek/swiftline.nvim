@@ -28,30 +28,47 @@ local DEFAULTS = {
 }
 
 ---Supply default styles and expand shorthand separator definitions
----@param style_config swiftline.StyleConfig|swiftline.Style
+---@param style_config swiftline.StyleConfig|swiftline.Style|fun():swiftline.StyleConfig|fun():swiftline.Style
 ---@param default_style? swiftline.StyleConfig|swiftline.Style
----@return swiftline.StyleSpec
+---@return swiftline.StyleSpec|fun():swiftline.StyleSpec
 function M.resolve_style(style_config, default_style)
-    local defaults = vim.tbl_extend("force", DEFAULTS, default_style or {})
-    local style = vim.tbl_extend("force", defaults, style_config or {})
-    local default_sep_styles = {
-        fg = style.bg,
-        bg = vim.api.nvim_get_hl(0, { name = "StatusLine" }).bg,
-    }
-    if type(style.sep) == "string" then
-        style.sep = { left = style.sep, right = style.sep }
+    local function resolve(style_table)
+        local defaults = vim.tbl_extend("force", DEFAULTS, default_style or {})
+        local style = vim.tbl_extend("force", defaults, style_table or {})
+        local default_sep_styles = {
+            fg = style.bg,
+            bg = vim.api.nvim_get_hl(0, { name = "StatusLine" }).bg,
+        }
+        if type(style.sep) == "string" then
+            style.sep = { left = style.sep, right = style.sep }
+        end
+        if type(style.sep.left) == "string" then
+            style.sep.left = { style.sep.left, style = {} }
+        end
+        if type(style.sep.right) == "string" then
+            style.sep.right = { style.sep.right, style = {} }
+        end
+        style.sep.left.style = vim.tbl_extend(
+            "force",
+            default_sep_styles,
+            style.sep.left.style or {}
+        )
+        style.sep.right.style = vim.tbl_extend(
+            "force",
+            default_sep_styles,
+            style.sep.right.style or {}
+        )
+        return style
     end
-    if type(style.sep.left) == "string" then
-        style.sep.left = { style.sep.left, style = {} }
+
+    if type(style_config) == "function" then
+        return function()
+            local result = style_config()
+            return resolve(result)
+        end
+    else
+        return resolve(style_config)
     end
-    if type(style.sep.right) == "string" then
-        style.sep.right = { style.sep.right, style = {} }
-    end
-    style.sep.left.style =
-        vim.tbl_extend("force", default_sep_styles, style.sep.left.style or {})
-    style.sep.right.style =
-        vim.tbl_extend("force", default_sep_styles, style.sep.right.style or {})
-    return style
 end
 
 return M

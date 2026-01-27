@@ -80,9 +80,12 @@ end
 
 ---Renders a module by calling its provider and applying styles
 ---@param module swiftline.ModuleSpec
+---@param provider_result? string|swiftline.ProviderResult Optional pre-fetched provider result (for cached providers)
 ---@return string Formatted statusline module string
-local function render_module(module)
-    local result = module.provider.get()
+local function render_module(module, provider_result)
+    local result = provider_result ~= nil and provider_result
+        or module.provider.get()
+
     if result == nil then
         return ""
     end
@@ -100,7 +103,9 @@ local function render_module(module)
         return ""
     end
 
-    local module_hl = vim.deepcopy(module.style)
+    local module_style = type(module.style) == "function" and module.style()
+        or module.style
+    local module_hl = vim.deepcopy(module_style)
     module_hl.sep = nil
     set_hl(module.module_idx, module_hl)
 
@@ -116,9 +121,9 @@ local function render_module(module)
         formatted_content = format_hl(module.module_idx, content)
     end
 
-    return format_separator(module.module_idx, "Left", module.style.sep.left)
+    return format_separator(module.module_idx, "Left", module_style.sep.left)
         .. formatted_content
-        .. format_separator(module.module_idx, "Right", module.style.sep.right)
+        .. format_separator(module.module_idx, "Right", module_style.sep.right)
 end
 
 return { render_module = render_module }

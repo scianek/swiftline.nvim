@@ -4,7 +4,7 @@
 
 ---@class swiftline.ModuleConfig
 ---@field [1] swiftline.ProviderSpec
----@field style? swiftline.StyleConfig|swiftline.Style
+---@field style? swiftline.StyleConfig|swiftline.Style|fun():swiftline.StyleConfig|fun():swiftline.Style
 
 local M = {}
 

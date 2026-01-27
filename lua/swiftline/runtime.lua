@@ -4,7 +4,7 @@ local render_module = require("swiftline.renderer").render_module
 
 ---@type swiftline.ModuleSpec[]
 local module_specs = nil
-local cached_segments = {}
+local cached_provider_results = {}
 
 ---Update cache for modules that listen to the given event
 ---@param event_name string
@@ -13,7 +13,7 @@ local function update_cache(event_name)
         if module.provider.events then
             for _, event in ipairs(module.provider.events) do
                 if event == event_name then
-                    cached_segments[idx] = render_module(module)
+                    cached_provider_results[idx] = module.provider.get()
                     break
                 end
             end
@@ -58,7 +58,7 @@ function M.init(specs)
     -- Initialize cache for event-based providers
     for idx, module in ipairs(module_specs) do
         if module.provider.events and #module.provider.events > 0 then
-            cached_segments[idx] = render_module(module)
+            cached_provider_results[idx] = module.provider.get()
         end
     end
 
@@ -71,13 +71,18 @@ end
 function M.render()
     local segments = {}
     for idx, module in ipairs(module_specs) do
+        local provider_result
+
         if module.provider.events and #module.provider.events > 0 then
-            -- Cached provider - use cached value
-            segments[idx] = cached_segments[idx] or ""
+            -- Use cached provider result
+            provider_result = cached_provider_results[idx]
         else
-            -- Live provider - always re-evaluate
-            segments[idx] = render_module(module)
+            -- Get fresh result for live providers
+            provider_result = module.provider.get()
         end
+
+        -- Always render (re-evaluates dynamic styles every time)
+        segments[idx] = render_module(module, provider_result)
     end
     return table.concat(segments)
 end
